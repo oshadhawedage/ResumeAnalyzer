@@ -1,6 +1,7 @@
 from fastapi import FastAPI, UploadFile, File
 import os
 
+from services.ai_service import analyze_resume
 from utils.pdf_parser import extract_text_from_pdf
 
 app = FastAPI()
@@ -28,10 +29,11 @@ async def upload_resume(file: UploadFile = File(...)):
         buffer.write(await file.read())
 
     extracted_text = extract_text_from_pdf(file_path)    
+    ai_result = analyze_resume(extracted_text)
 
     return {
 
         "filename": file.filename,
-        "extracted_text": extracted_text
+        "analysis": ai_result
 
     }
